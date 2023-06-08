@@ -27,4 +27,12 @@ warmStrategyCache({
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
 // TODO: Implement asset caching
-registerRoute();
+registerRoute(({request}) => {['style', 'script', 'worker'].includes(request.destination)}, // determining if a request matches the route.if destination prop is one of the 3
+new StaleWhileRevalidate({ //instance of the StaleWhileRevalidate caching strategy from the Workbox library.
+  cacheName: "assetCache", //setting the cacheName option for the caching strategy to assetCache
+  plugins:[
+    new CacheableResponsePlugin({
+      statuses: [0,200]
+    })
+  ]
+}));
